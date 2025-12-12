@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: light --default;
+};
+
+@plugin "daisyui/theme" {
+  name: "bloodTheme";
+  default: true;
+
+  --color-primary: #D32F2F;       /* CTA Red */
+  --color-primary-focus: #B71C1C;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #0D47A1;     /* Medical Navy Blue */
+  --color-secondary-focus: #08306A;
+  --color-secondary-content: #ffffff;
+
+  --color-accent: #FFB300;        /* Golden highlight */
+  --color-accent-focus: #FFA000;
+  --color-accent-content: #000000;
+
+  --color-neutral: #1E293B;
+  --color-neutral-focus: #0F172A;
+  --color-neutral-content: #FFFFFF;
+
+  --color-base-100: #F9FAFB;      /* Clean light background */
+  --color-base-200: #EFF1F5;
+  --color-base-300: #E2E8F0;
+
+  --color-info: #0288D1;
+  --color-success: #2E7D32;
+  --color-warning: #FFA726;
+  --color-error: #C62828;
+}
+
+/* Font */
+body {
+  font-family: "Urbanist", sans-serif;
+  background-color: var(--color-base-100);
+}
