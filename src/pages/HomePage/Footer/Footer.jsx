@@ -5,10 +5,9 @@ import Logo from "../../../assets/BloodLogo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-neutral bg-gradient-to-t from-neutral to-neutral-focus text-neutral-content py-10">
+    <footer className="bg-neutral bg-linear-to-t from-neutral to-neutral-focus text-neutral-content py-10">
       <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-6">
 
-        {/* Logo & About */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <img src={Logo} alt="RedHope Logo" className="w-8 h-8" />
