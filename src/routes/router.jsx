@@ -7,6 +7,8 @@ import Register from "../pages/Auth/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Profile from "../pages/Dashboard/Profile/Profile";
+import dashboardHome from "../pages/Dashboard/dashboardHome/dashboardHome";
+import CreateDonationRequest from "../pages/Dashboard/CreateDonationRequest/CreateDonationRequest";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +46,11 @@ export const router = createBrowserRouter([
     element: <PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>,
     children: [
       {
+        index: true,
+        Component: dashboardHome
+
+      },
+      {
         path: "profile",
         element: <Profile></Profile>,
         loader: async () => {
@@ -51,7 +58,18 @@ export const router = createBrowserRouter([
           const upazilas = await fetch('/upazilas.json').then(res => res.json());
           return { districts, upazilas };
         }
+      },
+      {
+        path: "/dashboard/create-donation-request",
+        element: <CreateDonationRequest />,
+        loader: async () => {
+          const districts = await fetch("/districts.json").then(res => res.json());
+          const upazilas = await fetch("/upazilas.json").then(res => res.json());
+
+          return { districts, upazilas };
+        }
       }
+
     ]
   }
 ]);
