@@ -21,7 +21,7 @@ const DashboardLayout = () => {
                     </label>
 
                     {/* Center Title */}
-                    <h1 className="mx-auto text-3xl font-extrabold tracking-wide bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                    <h1 className="mx-auto text-3xl font-extrabold tracking-wide bg-linear-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
                         RedHope Dashboard
                     </h1>
                 </div>
@@ -36,7 +36,7 @@ const DashboardLayout = () => {
             <div className="drawer-side h-full">
                 <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
-                <aside className="w-72 h-screen bg-gradient-to-b from-red-600 to-red-700 text-white flex flex-col">
+                <aside className="w-72 h-screen bg-linear-to-b from-red-600 to-red-700 text-white flex flex-col">
                     {/* Logo Section */}
                     <div className="flex items-center gap-4 px-6 py-6 border-b border-red-500">
                         <img src={logo} alt="RedHope" className="w-12 h-12" />

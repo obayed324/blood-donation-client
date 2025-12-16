@@ -34,10 +34,11 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      // 1️⃣ Register user
-      await registerUser(data.email, data.password);
+      
+      const result = await registerUser(data.email, data.password);
+      const uid = result.user.uid;
 
-      // 2️⃣ Upload image to ImageBB
+      
       const formData = new FormData();
       formData.append("image", data.avatar[0]);
 
@@ -48,7 +49,7 @@ const Register = () => {
 
       const photoURL = imgRes.data.data.url;
 
-      // 3️⃣ Update Firebase profile
+      
       await updateUserProfile({
         displayName: data.name,
         photoURL,
@@ -56,6 +57,7 @@ const Register = () => {
 
       // 4️⃣ Save user to database
       const userInfo = {
+        uid,
         name: data.name,
         email: data.email,
         photoURL,
@@ -68,15 +70,16 @@ const Register = () => {
 
       await axiosSecure.post("/users", userInfo);
 
-      // 5️⃣ Show success SweetAlert
+      
       Swal.fire({
         icon: "success",
         title: "Registration Successful!",
         text: "Welcome to RedHope, your account has been created.",
-        confirmButtonColor: "#D32F2F",
+        confirmButtonColor: "#D32F2F", 
       });
+      console.log(userInfo);
 
-      // 6️⃣ Redirect to desired location
+      
       navigate(location.state?.from || "/");
     } catch (error) {
       console.error(error);
