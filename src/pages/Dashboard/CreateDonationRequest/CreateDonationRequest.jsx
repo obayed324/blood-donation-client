@@ -4,14 +4,13 @@ import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
-
 const CreateDonationRequest = () => {
-  const { user, userStatus } = useAuth(); // userStatus = "active" | "blocked"
+  const { user, userStatus } = useAuth();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const loaderData = useLoaderData() || {};
 
-  // ❗ DO NOT CHANGE (same as Profile page)
+  // ❗ DO NOT CHANGE
   const districts = loaderData.districts?.[2]?.data || [];
   const upazilas = loaderData.upazilas?.[2]?.data || [];
 
@@ -26,10 +25,10 @@ const CreateDonationRequest = () => {
     bloodGroup: "",
     donationDate: "",
     donationTime: "",
-    requestMessage: "",
+    requestMessage: ""
   });
 
-  // 🔴 Blocked user protection
+  // 🔒 Blocked user protection
   useEffect(() => {
     if (userStatus === "blocked") {
       Swal.fire("Blocked", "You are not allowed to create donation request", "error");
@@ -37,7 +36,7 @@ const CreateDonationRequest = () => {
     }
   }, [userStatus, navigate]);
 
-  // 🔁 Filter upazilas by district
+  // 🔁 Filter upazilas
   useEffect(() => {
     if (!formData.recipientDistrict) {
       setFilteredUpazilas([]);
@@ -61,21 +60,17 @@ const CreateDonationRequest = () => {
       requesterUid: user.uid,
       requesterName: user.displayName,
       requesterEmail: user.email,
-
-      ...formData,
-
-      donationStatus: "pending",
-      createdAt: new Date(),
+      ...formData
     };
 
     try {
       await axiosSecure.post("/donation-requests", donationRequest);
 
-      Swal.fire("Success", "Donation request created", "success");
+      Swal.fire("Success", "Donation request created successfully", "success");
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
-      Swal.fire("Error", "Failed to create request", "error");
+      Swal.fire("Error", error.response?.data?.message || "Failed to create request", "error");
     }
   };
 
@@ -87,132 +82,38 @@ const CreateDonationRequest = () => {
 
       <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
 
-        {/* Requester Name */}
-        <div>
-          <label className="label">Requester Name</label>
-          <input
-            value={user?.displayName || ""}
-            readOnly
-            className="input input-bordered w-full bg-gray-100"
-          />
-        </div>
+        <Input label="Requester Name" value={user?.displayName} readOnly />
+        <Input label="Requester Email" value={user?.email} readOnly />
 
-        {/* Requester Email */}
-        <div>
-          <label className="label">Requester Email</label>
-          <input
-            value={user?.email || ""}
-            readOnly
-            className="input input-bordered w-full bg-gray-100"
-          />
-        </div>
+        <Input label="Recipient Name" name="recipientName" onChange={handleChange} required />
 
-        {/* Recipient Name */}
-        <div>
-          <label className="label">Recipient Name</label>
-          <input
-            name="recipientName"
-            required
-            onChange={handleChange}
-            className="input input-bordered w-full"
-          />
-        </div>
+        <Select
+          label="Blood Group"
+          name="bloodGroup"
+          onChange={handleChange}
+          options={["A+","A-","B+","B-","AB+","AB-","O+","O-"]}
+        />
 
-        {/* Blood Group */}
-        <div>
-          <label className="label">Blood Group</label>
-          <select
-            name="bloodGroup"
-            required
-            onChange={handleChange}
-            className="select select-bordered w-full"
-          >
-            <option value="">Select</option>
-            {["A+","A-","B+","B-","AB+","AB-","O+","O-"].map(bg => (
-              <option key={bg} value={bg}>{bg}</option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Recipient District"
+          name="recipientDistrict"
+          onChange={handleChange}
+          options={districts.map(d => ({ value: d.id, label: d.name }))}
+        />
 
-        {/* District */}
-        <div>
-          <label className="label">Recipient District</label>
-          <select
-            name="recipientDistrict"
-            required
-            onChange={handleChange}
-            className="select select-bordered w-full"
-          >
-            <option value="">Select District</option>
-            {districts.map(d => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Recipient Upazila"
+          name="recipientUpazila"
+          onChange={handleChange}
+          options={filteredUpazilas.map(u => ({ value: u.name, label: u.name }))}
+        />
 
-        {/* Upazila */}
-        <div>
-          <label className="label">Recipient Upazila</label>
-          <select
-            name="recipientUpazila"
-            required
-            onChange={handleChange}
-            className="select select-bordered w-full"
-          >
-            <option value="">Select Upazila</option>
-            {filteredUpazilas.map(u => (
-              <option key={u.id} value={u.name}>{u.name}</option>
-            ))}
-          </select>
-        </div>
+        <Input label="Hospital Name" name="hospitalName" onChange={handleChange} required />
+        <Input label="Full Address" name="fullAddress" onChange={handleChange} required />
 
-        {/* Hospital */}
-        <div>
-          <label className="label">Hospital Name</label>
-          <input
-            name="hospitalName"
-            required
-            onChange={handleChange}
-            className="input input-bordered w-full"
-          />
-        </div>
+        <Input type="date" label="Donation Date" name="donationDate" onChange={handleChange} required />
+        <Input type="time" label="Donation Time" name="donationTime" onChange={handleChange} required />
 
-        {/* Full Address */}
-        <div>
-          <label className="label">Full Address</label>
-          <input
-            name="fullAddress"
-            required
-            onChange={handleChange}
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        {/* Date */}
-        <div>
-          <label className="label">Donation Date</label>
-          <input
-            type="date"
-            name="donationDate"
-            required
-            onChange={handleChange}
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        {/* Time */}
-        <div>
-          <label className="label">Donation Time</label>
-          <input
-            type="time"
-            name="donationTime"
-            required
-            onChange={handleChange}
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        {/* Message */}
         <div className="md:col-span-2">
           <label className="label">Request Message</label>
           <textarea
@@ -224,19 +125,38 @@ const CreateDonationRequest = () => {
           />
         </div>
 
-        {/* Submit */}
         <div className="md:col-span-2 text-center">
-          <button
-            disabled={userStatus === "blocked"}
-            className="btn btn-error px-10 text-white"
-          >
+          <button className="btn btn-error px-10 text-white">
             Request Blood
           </button>
         </div>
-
       </form>
     </div>
   );
 };
+
+/* Reusable Components */
+const Input = ({ label, ...props }) => (
+  <div>
+    <label className="label">{label}</label>
+    <input {...props} className="input input-bordered w-full bg-gray-100" />
+  </div>
+);
+
+const Select = ({ label, options, ...props }) => (
+  <div>
+    <label className="label">{label}</label>
+    <select {...props} required className="select select-bordered w-full">
+      <option value="">Select</option>
+      {options.map(opt =>
+        typeof opt === "string" ? (
+          <option key={opt} value={opt}>{opt}</option>
+        ) : (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        )
+      )}
+    </select>
+  </div>
+);
 
 export default CreateDonationRequest;
