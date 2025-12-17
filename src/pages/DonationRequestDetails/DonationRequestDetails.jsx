@@ -11,21 +11,42 @@ const DonationRequestDetails = () => {
   const navigate = useNavigate();
 
   const [request, setRequest] = useState(null);
+  const [districts, setDistricts] = useState([]);
+  const [upazilas, setUpazilas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
 
+  // fetch request + districts + upazilas
   useEffect(() => {
-    axiosSecure
-      .get(`/donation-requests/${id}`)
-      .then(res => {
-        setRequest(res.data);
+    const loadData = async () => {
+      try {
+        const [reqRes, disRes, upaRes] = await Promise.all([
+          axiosSecure.get(`/donation-requests/${id}`),
+          fetch("/districts.json").then(res => res.json()),
+          fetch("/upazilas.json").then(res => res.json()),
+        ]);
+
+        setRequest(reqRes.data);
+        setDistricts(disRes?.[0]?.data || disRes?.[2]?.data || []);
+        setUpazilas(upaRes?.[0]?.data || upaRes?.[2]?.data || []);
         setLoading(false);
-      })
-      .catch(() => {
-        Swal.fire("Error", "Failed to load request", "error");
+      } catch (err) {
+        Swal.fire("Error", "Failed to load data", "error");
         setLoading(false);
-      });
+      }
+    };
+
+    loadData();
   }, [id, axiosSecure]);
+
+  // helper functions
+  const getDistrictName = (id) => {
+    return districts.find(d => d.id === id)?.name || id;
+  };
+
+  const getUpazilaName = (id) => {
+    return upazilas.find(u => u.id === id)?.name || id;
+  };
 
   const handleConfirmDonate = async () => {
     try {
@@ -36,9 +57,8 @@ const DonationRequestDetails = () => {
 
       Swal.fire("Success", "Donation confirmed!", "success");
       navigate("/dashboard");
-    } 
-    catch (error) {
-      Swal.fire("Error", "Failed to confirm donation", error);
+    } catch {
+      Swal.fire("Error", "Failed to confirm donation", "error");
     }
   };
 
@@ -54,15 +74,26 @@ const DonationRequestDetails = () => {
       <div className="grid md:grid-cols-2 gap-4 text-gray-700">
         <p><strong>Recipient Name:</strong> {request.recipientName}</p>
         <p><strong>Blood Group:</strong> {request.bloodGroup}</p>
-        <p><strong>District:</strong> {request.recipientDistrict}</p>
-        <p><strong>Upazila:</strong> {request.recipientUpazila}</p>
+
+        <p>
+          <strong>District:</strong>{" "}
+          {getDistrictName(request.recipientDistrict)}
+        </p>
+
+        <p>
+          <strong>Upazila:</strong>{" "}
+          {getUpazilaName(request.recipientUpazila)}
+        </p>
+
         <p><strong>Hospital:</strong> {request.hospitalName}</p>
         <p><strong>Address:</strong> {request.fullAddress}</p>
         <p><strong>Date:</strong> {request.donationDate}</p>
         <p><strong>Time:</strong> {request.donationTime}</p>
+
         <p className="md:col-span-2">
           <strong>Message:</strong> {request.requestMessage}
         </p>
+
         <p>
           <strong>Status:</strong>{" "}
           <span className="text-red-600 font-semibold">
@@ -75,7 +106,7 @@ const DonationRequestDetails = () => {
         <div className="text-center mt-8">
           <button
             onClick={() => setOpenModal(true)}
-            className="btn btn-error text-white px-10"
+            className="btn btn-error px-10 text-white"
           >
             Donate Blood
           </button>
@@ -90,18 +121,16 @@ const DonationRequestDetails = () => {
               Confirm Donation
             </h3>
 
-            <div className="space-y-4">
-              <input
-                value={user.displayName}
-                readOnly
-                className="input input-bordered w-full bg-gray-100"
-              />
-              <input
-                value={user.email}
-                readOnly
-                className="input input-bordered w-full bg-gray-100"
-              />
-            </div>
+            <input
+              value={user.displayName}
+              readOnly
+              className="input input-bordered w-full mb-3 bg-gray-100"
+            />
+            <input
+              value={user.email}
+              readOnly
+              className="input input-bordered w-full bg-gray-100"
+            />
 
             <div className="flex justify-end gap-3 mt-6">
               <button

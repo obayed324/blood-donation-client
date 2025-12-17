@@ -54,20 +54,61 @@ const DonorDashboardHome = () => {
     });
   };
 
+  const handleStatusChange = (id, status) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to mark this donation as ${status}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosSecure.patch(`/donation-requests/status/${id}`, {
+            status,
+          });
+
+          Swal.fire(
+            "Updated!",
+            `Donation marked as ${status}.`,
+            "success"
+          );
+
+          // Update UI instantly
+          setRequests(prev =>
+            prev.map(req =>
+              req._id === id ? { ...req, status } : req
+            )
+          );
+        } catch (error) {
+          console.error(error);
+          Swal.fire("Error", "Failed to update status", "error");
+        }
+      }
+    });
+  };
+
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="p-6">
       {/* Welcome */}
-      <h2 className="text-3xl font-bold mb-6">
-        Welcome, <span className="text-red-600">{user.displayName}</span> 👋
-      </h2>
+      <div className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl p-6 shadow">
+        <h2 className="text-3xl font-bold">
+          Welcome back, {user.displayName} 👋
+        </h2>
+        <p className="opacity-90 mt-1">
+          Manage and track your donation requests
+        </p>
+      </div>
 
       {/* Donation Requests Table */}
       {requests.length > 0 && (
         <>
-          <h3 className="text-xl font-semibold mb-4">
-            Your Recent Donation Requests
+          <h3 className="text-xl font-semibold mb-4 text-center mt-6">
+            Recent Donation Requests
           </h3>
 
           <div className="overflow-x-auto bg-white shadow rounded-lg">
@@ -95,19 +136,22 @@ const DonorDashboardHome = () => {
                     <td>{req.bloodGroup}</td>
                     <td><span className="badge badge-outline">{req.status}</span></td>
                     <td>
-                      {req.status === "inprogress" ? (
+                      {(req.status === "inprogress" || req.status === "done") && req.donor ? (
                         <>
-                          <p>{req.donor?.name}</p>
-                          <p className="text-sm">{req.donor?.email}</p>
+                          <p>{req.donor.name}</p>
+                          <p className="text-sm">{req.donor.email}</p>
                         </>
-                      ) : ("-")}
+                      ) : (
+                        "-"
+                      )}
                     </td>
+
 
                     <td className="space-x-1">
                       {/* View */}
                       <button
                         onClick={() => navigate(`/donation-requests/${req._id}`)}
-                        className="btn btn-xs btn-info"
+                        className="btn btn-xs btn-info  text-white"
                       >
                         View
                       </button>
@@ -115,7 +159,7 @@ const DonorDashboardHome = () => {
                       {/* Edit */}
                       <button
                         onClick={() => navigate(`/dashboard/edit-donation/${req._id}`)}
-                        className="btn btn-xs btn-warning"
+                        className="btn btn-xs btn-warning  text-white"
                       >
                         Edit
                       </button>
@@ -123,22 +167,31 @@ const DonorDashboardHome = () => {
                       {/* Delete */}
                       <button
                         onClick={() => handleDelete(req._id)}
-                        className="btn btn-xs btn-error"
+                        className="btn btn-xs btn-error text-white"
                       >
                         Delete
                       </button>
 
+
                       {/* Done / Cancel */}
                       {req.status === "inprogress" && (
                         <>
-                          <button className="btn btn-xs btn-success">
+                          <button
+                            onClick={() => handleStatusChange(req._id, "done")}
+                            className="btn btn-xs btn-success"
+                          >
                             Done
                           </button>
-                          <button className="btn btn-xs btn-outline">
+
+                          <button
+                            onClick={() => handleStatusChange(req._id, "canceled")}
+                            className="btn btn-xs btn-outline btn-error"
+                          >
                             Cancel
                           </button>
                         </>
                       )}
+
                     </td>
                   </tr>
                 ))}

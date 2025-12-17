@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLoaderData } from "react-router";
 import Swal from "sweetalert2";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
-import useAuth from "../../hooks/useAuth";
+import useAxios from "../../hooks/useAxios";
 
 const DonationRequests = () => {
-  const { user } = useAuth(); // Auth context
-  const axiosSecure = useAxiosSecure();
+  const axios = useAxios();
   const navigate = useNavigate();
+
+  const loaderData = useLoaderData() || {};
+  const districts = loaderData.districts?.[2]?.data || [];
 
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axiosSecure
+    axios
       .get("/donation-requests?status=pending")
       .then(res => {
         setRequests(res.data);
@@ -24,14 +25,12 @@ const DonationRequests = () => {
         Swal.fire("Error", "Failed to fetch donation requests", "error");
         setLoading(false);
       });
-  }, [axiosSecure]);
+  }, [axios]);
+
+  const getDistrictName = (id) =>
+    districts.find(d => String(d.id) === String(id))?.name || "-";
 
   const handleViewDetails = (id) => {
-    if (!user) {
-      Swal.fire("Login Required", "Please login to view details", "warning");
-      navigate("/login");
-      return;
-    }
     navigate(`/donation-requests/${id}`);
   };
 
@@ -51,7 +50,7 @@ const DonationRequests = () => {
             <div>
               <h3 className="text-xl font-semibold text-red-600 mb-2">{req.recipientName}</h3>
               <p className="text-gray-700 mb-1">
-                <strong>Location:</strong> {req.recipientDistrict}, {req.recipientUpazila}
+                <strong>Location:</strong> {getDistrictName(req.recipientDistrict)}, {req.recipientUpazila}
               </p>
               <p className="text-gray-700 mb-1"><strong>Blood Group:</strong> {req.bloodGroup}</p>
               <p className="text-gray-700 mb-1"><strong>Date:</strong> {req.donationDate}</p>

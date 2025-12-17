@@ -12,6 +12,8 @@ import CreateDonationRequest from "../pages/Dashboard/CreateDonationRequest/Crea
 import DonationRequests from "../pages/DonationRequests/DonationRequests";
 import DonationRequestDetails from "../pages/DonationRequestDetails/DonationRequestDetails";
 import EditDonationRequest from "../pages/Dashboard/dashboardHome/EditDonationRequest/EditDonationRequest";
+import MyDonationRequests from "../pages/Dashboard/MyDonationRequests/MyDonationRequests";
+import SearchDonor from "../pages/HomePage/SearchDonor/SearchDonor";
 
 
 
@@ -26,13 +28,27 @@ export const router = createBrowserRouter([
       },
       {
         path: '/donation-requests',
-        Component: DonationRequests
+        Component: DonationRequests,
+        loader: async () => {
+          const districts = await fetch('/districts.json').then(res => res.json());
+          const upazilas = await fetch('/upazilas.json').then(res => res.json());
+          return { districts, upazilas };
+        }
       },
       {
         path: "/donation-requests/:id",
         element: (
           <PrivateRoute><DonationRequestDetails></DonationRequestDetails></PrivateRoute>
         ),
+      },
+      {
+        path:"/search",
+        Component:SearchDonor,
+        loader: async () => {
+          const districts = await fetch('/districts.json').then(res => res.json());
+          const upazilas = await fetch('/upazilas.json').then(res => res.json());
+          return { districts, upazilas };
+        }
       }
 
     ],
@@ -86,15 +102,20 @@ export const router = createBrowserRouter([
         }
       },
       {
-        path:"/dashboard/edit-donation/:id",
-        Component:EditDonationRequest,
+        path: "/dashboard/edit-donation/:id",
+        Component: EditDonationRequest,
         loader: async () => {
           const districts = await fetch("/districts.json").then(res => res.json());
           const upazilas = await fetch("/upazilas.json").then(res => res.json());
 
           return { districts, upazilas };
         }
+      },
+      {
+        path: "/dashboard/my-donation-requests",
+        Component: MyDonationRequests
       }
+
 
     ]
   }
