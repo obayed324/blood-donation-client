@@ -7,9 +7,13 @@ import Register from "../pages/Auth/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Profile from "../pages/Dashboard/Profile/Profile";
-import dashboardHome from "../pages/Dashboard/dashboardHome/dashboardHome";
+import DashboardHome from "../pages/Dashboard/dashboardHome/dashboardHome";
 import CreateDonationRequest from "../pages/Dashboard/CreateDonationRequest/CreateDonationRequest";
 import DonationRequests from "../pages/DonationRequests/DonationRequests";
+import DonationRequestDetails from "../pages/DonationRequestDetails/DonationRequestDetails";
+import EditDonationRequest from "../pages/Dashboard/dashboardHome/EditDonationRequest/EditDonationRequest";
+
+
 
 export const router = createBrowserRouter([
   {
@@ -21,9 +25,16 @@ export const router = createBrowserRouter([
         Component: Home
       },
       {
-        path:'/donation-requests',
-        Component:DonationRequests
+        path: '/donation-requests',
+        Component: DonationRequests
+      },
+      {
+        path: "/donation-requests/:id",
+        element: (
+          <PrivateRoute><DonationRequestDetails></DonationRequestDetails></PrivateRoute>
+        ),
       }
+
     ],
   },
   {
@@ -52,7 +63,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: dashboardHome
+        Component: DashboardHome
 
       },
       {
@@ -67,6 +78,16 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/create-donation-request",
         element: <CreateDonationRequest />,
+        loader: async () => {
+          const districts = await fetch("/districts.json").then(res => res.json());
+          const upazilas = await fetch("/upazilas.json").then(res => res.json());
+
+          return { districts, upazilas };
+        }
+      },
+      {
+        path:"/dashboard/edit-donation/:id",
+        Component:EditDonationRequest,
         loader: async () => {
           const districts = await fetch("/districts.json").then(res => res.json());
           const upazilas = await fetch("/upazilas.json").then(res => res.json());
