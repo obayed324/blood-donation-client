@@ -19,6 +19,8 @@ import PaymentHistory from "../pages/HomePage/Home/PaymentHistory/PaymentHistory
 import PaymentSuccess from "../pages/HomePage/Payments/PaymentSuccess";
 import PaymentCancelled from "../pages/HomePage/Payments/PaymentCancelled";
 import Funding from "../pages/HomePage/Home/Funding/Funding";
+import AdminRoute from "./AdminRoute";
+import AdminDonationRequests from "../pages/Dashboard/AdminDonationRequests/AdminDonationRequests";
 
 
 
@@ -139,6 +141,11 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/my-donation-requests",
         Component: MyDonationRequests
+      },
+      {
+        path:"/dashboard/all-blood-donation-request",
+        element:<AdminRoute><AdminDonationRequests></AdminDonationRequests></AdminRoute>
+
       }
 
 
