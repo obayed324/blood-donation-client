@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
@@ -7,208 +6,206 @@ import Swal from "sweetalert2";
 const ITEMS_PER_PAGE = 5;
 
 const AdminDonationRequests = () => {
-  const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
-  const navigate = useNavigate();
+    
+    const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
 
-  const [allRequests, setAllRequests] = useState([]);
-  const [filteredRequests, setFilteredRequests] = useState([]);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+    const [allRequests, setAllRequests] = useState([]);
+    const [filteredRequests, setFilteredRequests] = useState([]);
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true);
 
-  // fetch ALL donation requests
-  useEffect(() => {
-    axiosSecure
-      .get("/admin/donation-requests")
-      .then((res) => {
-        setAllRequests(res.data);
-        setFilteredRequests(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [axiosSecure]);
+    // fetch ALL donation requests
+    useEffect(() => {
+        axiosSecure
+            .get("/admin/donation-requests")
+            .then((res) => {
+                setAllRequests(res.data);
+                setFilteredRequests(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, [axiosSecure]);
 
-  //Filtering (FIXED)
-  useEffect(() => {
-    if (statusFilter === "all") {
-      setFilteredRequests(allRequests);
-    } else {
-      setFilteredRequests(
-        allRequests.filter(
-          (req) => req.status?.toLowerCase() === statusFilter
-        )
-      );
+    //Filtering (FIXED)
+    useEffect(() => {
+        setTimeout(() => {
+            if (statusFilter === "all") {
+                setFilteredRequests(allRequests);
+            } else {
+                setFilteredRequests(
+                    allRequests.filter(
+                        (req) => req.status?.toLowerCase() === statusFilter
+                    )
+                );
+            }
+            setCurrentPage(1);
+        }, 0);
+    }, [statusFilter, allRequests]);
+
+
+    // Pagination
+    const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedRequests = filteredRequests.slice(
+        startIndex,
+        startIndex + ITEMS_PER_PAGE
+    );
+
+    // Delete
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This donation request will be deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await axiosSecure.delete(`/donation-requests/${id}`);
+                setAllRequests((prev) => prev.filter((r) => r._id !== id));
+                Swal.fire("Deleted!", "Donation request removed.", "success");
+            }
+        });
+    };
+
+    if (loading) {
+        return <p className="text-center mt-10">Loading...</p>;
     }
-    setCurrentPage(1);
-  }, [statusFilter, allRequests]);
 
-  // Pagination
-  const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedRequests = filteredRequests.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+    return (
+        <div className="p-6">
+            <h2 className="text-3xl font-bold mb-6 text-red-600">
+                All Blood Donation Requests 🩸
+            </h2>
 
-  // Delete
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This donation request will be deleted!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await axiosSecure.delete(`/donation-requests/${id}`);
-        setAllRequests((prev) => prev.filter((r) => r._id !== id));
-        Swal.fire("Deleted!", "Donation request removed.", "success");
-      }
-    });
-  };
+            {/* Filter */}
+            <div className="mb-4 flex gap-3">
+                <select
+                    className="select select-bordered max-w-xs"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="inprogress">In Progress</option>
+                    <option value="done">Done</option>
+                    <option value="canceled">Canceled</option>
+                </select>
+            </div>
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading...</p>;
-  }
+            {/* Table */}
+            <div className="overflow-x-auto bg-white rounded-xl shadow">
+                <table className="table table-zebra">
+                    <thead className="bg-gray-100">
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Blood</th>
+                            <th>Status</th>
+                            <th>Donor</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-  return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-red-600">
-        All Blood Donation Requests 🩸
-      </h2>
+                    <tbody>
+                        {paginatedRequests.map((req) => (
+                            <tr key={req._id}>
+                                <td>{req.recipientName}</td>
+                                <td>
+                                    {req.recipientDistrict}, {req.recipientUpazila}
+                                </td>
+                                <td>{req.donationDate}</td>
+                                <td>{req.donationTime}</td>
+                                <td>{req.bloodGroup}</td>
 
-      {/* Filter */}
-      <div className="mb-4 flex gap-3">
-        <select
-          className="select select-bordered max-w-xs"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="inprogress">In Progress</option>
-          <option value="done">Done</option>
-          <option value="canceled">Canceled</option>
-        </select>
-      </div>
+                                <td>
+                                    <span
+                                        className={`badge text-white ${req.status === "pending" && "badge-warning"
+                                            } ${req.status === "inprogress" && "badge-info"
+                                            } ${req.status === "done" && "badge-success"
+                                            } ${req.status === "canceled" && "badge-error"
+                                            }`}
+                                    >
+                                        {req.status}
+                                    </span>
+                                </td>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow">
-        <table className="table table-zebra">
-          <thead className="bg-gray-100">
-            <tr>
-              <th>Recipient</th>
-              <th>Location</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Blood</th>
-              <th>Status</th>
-              <th>Donor</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+                                <td>
+                                    {(req.status === "inprogress" || req.status === "done") &&
+                                        req.donor ? (
+                                        <>
+                                            <p>{req.donor.name}</p>
+                                            <p className="text-xs">{req.donor.email}</p>
+                                        </>
+                                    ) : (
+                                        "-"
+                                    )}
+                                </td>
 
-          <tbody>
-            {paginatedRequests.map((req) => (
-              <tr key={req._id}>
-                <td>{req.recipientName}</td>
-                <td>
-                  {req.recipientDistrict}, {req.recipientUpazila}
-                </td>
-                <td>{req.donationDate}</td>
-                <td>{req.donationTime}</td>
-                <td>{req.bloodGroup}</td>
+                                <td className="space-x-1">
+                                    <button
+                                        onClick={() =>
+                                            navigate(`/donation-requests/${req._id}`)
+                                        }
+                                        className="btn btn-xs btn-info text-white"
+                                    >
+                                        View
+                                    </button>
 
-                <td>
-                  <span
-                    className={`badge text-white ${
-                      req.status === "pending" && "badge-warning"
-                    } ${
-                      req.status === "inprogress" && "badge-info"
-                    } ${
-                      req.status === "done" && "badge-success"
-                    } ${
-                      req.status === "canceled" && "badge-error"
-                    }`}
-                  >
-                    {req.status}
-                  </span>
-                </td>
+                                    <button
+                                        onClick={() =>
+                                            navigate(`/dashboard/edit-donation/${req._id}`)
+                                        }
+                                        className="btn btn-xs btn-warning text-white"
+                                    >
+                                        Edit
+                                    </button>
 
-                <td>
-                  {(req.status === "inprogress" || req.status === "done") &&
-                  req.donor ? (
-                    <>
-                      <p>{req.donor.name}</p>
-                      <p className="text-xs">{req.donor.email}</p>
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </td>
+                                    <button
+                                        onClick={() => handleDelete(req._id)}
+                                        className="btn btn-xs btn-error text-white"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
 
-                <td className="space-x-1">
-                  <button
-                    onClick={() =>
-                      navigate(`/donation-requests/${req._id}`)
-                    }
-                    className="btn btn-xs btn-info text-white"
-                  >
-                    View
-                  </button>
+                        {paginatedRequests.length === 0 && (
+                            <tr>
+                                <td colSpan="8" className="text-center py-6">
+                                    No donation requests found
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-                  <button
-                    onClick={() =>
-                      navigate(`/dashboard/edit-donation/${req._id}`)
-                    }
-                    className="btn btn-xs btn-warning text-white"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(req._id)}
-                    className="btn btn-xs btn-error text-white"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {paginatedRequests.length === 0 && (
-              <tr>
-                <td colSpan="8" className="text-center py-6">
-                  No donation requests found
-                </td>
-              </tr>
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-6 gap-2">
+                    {[...Array(totalPages).keys()].map((num) => (
+                        <button
+                            key={num}
+                            onClick={() => setCurrentPage(num + 1)}
+                            className={`btn btn-sm ${currentPage === num + 1 ? "btn-error" : "btn-outline"
+                                }`}
+                        >
+                            {num + 1}
+                        </button>
+                    ))}
+                </div>
             )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-6 gap-2">
-          {[...Array(totalPages).keys()].map((num) => (
-            <button
-              key={num}
-              onClick={() => setCurrentPage(num + 1)}
-              className={`btn btn-sm ${
-                currentPage === num + 1 ? "btn-error" : "btn-outline"
-              }`}
-            >
-              {num + 1}
-            </button>
-          ))}
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default AdminDonationRequests;

@@ -34,14 +34,18 @@ const MyDonationRequests = () => {
 
   // Filter by status
   useEffect(() => {
-    if (statusFilter === "all") {
-      setFilteredRequests(allRequests);
-    } else {
-      setFilteredRequests(
-        allRequests.filter(req => req.status === statusFilter)
-      );
-    }
-    setCurrentPage(1);
+    const timer = setTimeout(() => {
+      if (statusFilter === "all") {
+        setFilteredRequests(allRequests);
+      } else {
+        setFilteredRequests(
+          allRequests.filter(req => req.status?.toLowerCase() === statusFilter)
+        );
+      }
+      setCurrentPage(1);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [statusFilter, allRequests]);
 
   // Pagination
@@ -177,9 +181,8 @@ const MyDonationRequests = () => {
             <button
               key={num}
               onClick={() => setCurrentPage(num + 1)}
-              className={`btn btn-sm ${
-                currentPage === num + 1 ? "btn-error" : "btn-outline"
-              }`}
+              className={`btn btn-sm ${currentPage === num + 1 ? "btn-error" : "btn-outline"
+                }`}
             >
               {num + 1}
             </button>
