@@ -14,6 +14,11 @@ import DonationRequestDetails from "../pages/DonationRequestDetails/DonationRequ
 import EditDonationRequest from "../pages/Dashboard/dashboardHome/EditDonationRequest/EditDonationRequest";
 import MyDonationRequests from "../pages/Dashboard/MyDonationRequests/MyDonationRequests";
 import SearchDonor from "../pages/HomePage/SearchDonor/SearchDonor";
+import Payment from "../pages/HomePage/Payments/Payment";
+import PaymentHistory from "../pages/HomePage/Home/PaymentHistory/PaymentHistory";
+import PaymentSuccess from "../pages/HomePage/Payments/PaymentSuccess";
+import PaymentCancelled from "../pages/HomePage/Payments/PaymentCancelled";
+import Funding from "../pages/HomePage/Home/Funding/Funding";
 
 
 
@@ -49,7 +54,27 @@ export const router = createBrowserRouter([
           const upazilas = await fetch('/upazilas.json').then(res => res.json());
           return { districts, upazilas };
         }
-      }
+      },
+      {
+        path:'/funding',
+        element:<PrivateRoute><Funding></Funding></PrivateRoute>
+      },
+      {
+        path: 'payment/:id',
+        element: <PrivateRoute><Payment></Payment></PrivateRoute>
+      },
+      {
+        path: 'payment-history',
+        element:<PrivateRoute><PaymentHistory></PaymentHistory></PrivateRoute>
+      },
+      {
+        path: 'payment-success',
+        element:<PrivateRoute><PaymentSuccess></PaymentSuccess></PrivateRoute>
+      }, 
+      {
+        path: 'payment-cancelled', 
+        element:<PrivateRoute><PaymentCancelled></PaymentCancelled></PrivateRoute>
+      },
 
     ],
   },
