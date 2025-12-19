@@ -22,7 +22,7 @@ const DashboardLayout = () => {
     { to: "/dashboard/my-donation-requests", label: "My Donations", icon: <FaTint />, roles: ["donor"] },
     { to: "/dashboard/create-donation-request", label: "Create Donation Request", icon: <FaTint />, roles: ["donor"] },
     { to: "/dashboard/all-blood-donation-request", label: "All Donation Requests", icon: <FaTint />, roles: ["admin", "volunteer"] },
-    { to: "/dashboard/users", label: "All Users", icon: <FaUsers />, roles: ["admin"] },
+    { to: "/dashboard/all-users", label: "All Users", icon: <FaUsers />, roles: ["admin"] },
   ];
 
   return (
