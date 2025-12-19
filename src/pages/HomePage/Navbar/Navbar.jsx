@@ -85,7 +85,7 @@ const Navbar = () => {
           <>
             {/* Donate CTA */}
             <Link
-              to="/donate"
+              to="/funding"
               className="btn btn-primary text-white hidden md:flex"
             >
               Donate Now

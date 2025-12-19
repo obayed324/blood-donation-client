@@ -24,6 +24,7 @@ import AdminDonationRequests from "../pages/Dashboard/AdminDonationRequests/Admi
 import AdminAllUsers from "../pages/Dashboard/AdminAllUsers/AdminAllUsers";
 import VolunteerRoute from "./VolunteerRoute";
 import VolunteerDonationRequests from "../pages/Dashboard/VolunteerDonationRequests/VolunteerDonationRequests";
+import AboutUs from "../pages/HomePage/AboutUs/AboutUs";
 
 
 
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
         path: 'payment-cancelled', 
         element:<PrivateRoute><PaymentCancelled></PaymentCancelled></PrivateRoute>
       },
+      {
+        path:"/about",
+        element:<AboutUs></AboutUs>
+      }
 
     ],
   },

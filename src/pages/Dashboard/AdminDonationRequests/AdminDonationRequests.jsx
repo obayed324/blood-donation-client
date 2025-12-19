@@ -3,7 +3,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const AdminDonationRequests = () => {
     

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const AdminAllUsers = () => {
   const axiosSecure = useAxiosSecure();

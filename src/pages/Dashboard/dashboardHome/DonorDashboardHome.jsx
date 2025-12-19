@@ -178,14 +178,14 @@ const DonorDashboardHome = () => {
                         <>
                           <button
                             onClick={() => handleStatusChange(req._id, "done")}
-                            className="btn btn-xs btn-success"
+                            className="btn btn-xs btn-success text-white"
                           >
                             Done
                           </button>
 
                           <button
                             onClick={() => handleStatusChange(req._id, "canceled")}
-                            className="btn btn-xs btn-outline btn-error"
+                            className="btn btn-xs btn-outline btn-error bg-amber-800 text-white"
                           >
                             Cancel
                           </button>

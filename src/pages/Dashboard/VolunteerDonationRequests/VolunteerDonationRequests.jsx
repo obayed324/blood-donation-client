@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const VolunteerDonationRequests = () => {
   const axiosSecure = useAxiosSecure();
