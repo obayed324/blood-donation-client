@@ -4,6 +4,22 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 
+import districts from "../../../../public/districts.json";
+
+const districtMap = (() => {
+  const table = districts.find(
+    (item) => item.type === "table" && item.name === "districts"
+  );
+
+  const map = {};
+  table.data.forEach((d) => {
+    map[d.id] = d.name; // English name
+    // map[d.id] = d.bn_name; // Bangla if needed
+  });
+
+  return map;
+})();
+
 const DonorDashboardHome = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
@@ -130,7 +146,10 @@ const DonorDashboardHome = () => {
                 {requests.map(req => (
                   <tr key={req._id}>
                     <td>{req.recipientName}</td>
-                    <td>{req.recipientDistrict}, {req.recipientUpazila}</td>
+                    <td>
+                      {districtMap[req.recipientDistrict] || "Unknown"},{" "}
+                      {req.recipientUpazila}
+                    </td>
                     <td>{req.donationDate}</td>
                     <td>{req.donationTime}</td>
                     <td>{req.bloodGroup}</td>

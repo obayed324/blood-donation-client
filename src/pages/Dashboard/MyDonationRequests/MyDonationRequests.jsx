@@ -6,6 +6,22 @@ import { useNavigate } from "react-router";
 
 const ITEMS_PER_PAGE = 5;
 
+import districts from "../../../../public/districts.json";
+
+const districtMap = (() => {
+  const table = districts.find(
+    (item) => item.type === "table" && item.name === "districts"
+  );
+
+  const map = {};
+  table.data.forEach((d) => {
+    map[d.id] = d.name; // English name
+    // map[d.id] = d.bn_name; // Bangla if needed
+  });
+
+  return map;
+})();
+
 const MyDonationRequests = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
@@ -116,7 +132,10 @@ const MyDonationRequests = () => {
             {paginatedRequests.map(req => (
               <tr key={req._id}>
                 <td>{req.recipientName}</td>
-                <td>{req.recipientDistrict}, {req.recipientUpazila}</td>
+                <td>
+                  {districtMap[req.recipientDistrict] || "Unknown"},{" "}
+                  {req.recipientUpazila}
+                </td>
                 <td>{req.donationDate}</td>
                 <td>{req.donationTime}</td>
                 <td>{req.bloodGroup}</td>
