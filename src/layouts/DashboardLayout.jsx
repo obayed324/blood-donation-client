@@ -20,7 +20,7 @@ const DashboardLayout = () => {
     { to: "/dashboard", label: "Home", icon: <FaHome />, roles: ["donor", "admin", "volunteer"], exact: true }, // ✅ Added exact: true
     { to: "/dashboard/profile", label: "My Profile", icon: <FaUser />, roles: ["donor", "admin", "volunteer"] },
     { to: "/dashboard/my-donation-requests", label: "My Donations", icon: <FaTint />, roles: ["donor"] },
-    { to: "/dashboard/create-donation-request", label: "Create Donation Request", icon: <FaTint />, roles: ["donor"] },
+    { to: "/dashboard/create-donation-request", label: "Create Donation Request", icon: <FaTint />, roles: ["donor","volunteer","admin"] },
     { to: "/dashboard/all-blood-donation-request", label: "All Donation Requests", icon: <FaTint />, roles: ["admin"] },
     { to: "/dashboard/all-blood-donation-request-volunteer", label: "All Donation Requests", icon: <FaTint />, roles: ["volunteer"] },
     { to: "/dashboard/all-users", label: "All Users", icon: <FaUsers />, roles: ["admin"] },
