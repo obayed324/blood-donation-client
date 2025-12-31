@@ -20,7 +20,7 @@ It supports **role-based login** to provide different access levels for donors, 
 ---
 
 ## ⚡ Core Features
-- **Role-Based Login:** Different access for donors, admins, and users  
+- **Role-Based Login:** Different access for donors, admins, and volunteer 
 - User registration and profile management  
 - Create and manage blood donation requests  
 - Donor management dashboard (admin)  
