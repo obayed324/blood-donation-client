@@ -1,16 +1,51 @@
-# React + Vite
+# Blood Donation Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Blood Donation Screenshot](./src//assets/banner.jpeg)
 
-Currently, two official plugins are available:
+## 🔹 Description
+The **Blood Donation Application** is a user-friendly platform designed to connect blood donors with recipients efficiently, promoting a seamless and effective donation process.  
+It supports **role-based login** to provide different access levels for donors, admins, and other users.  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Live Demo:** [Click here](https://blood-donation-auth-bb887.web.app/)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠 Technologies Used
+- **Frontend:** React, JavaScript, React Router, Tailwind CSS  
+- **Backend:** Node.js, Express.js  
+- **Database:** MongoDB  
+- **Authentication & Authorization:** Firebase Authentication, Role-based access control  
+- **Other:** TanStack Query for data fetching and state management  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ⚡ Core Features
+- **Role-Based Login:** Different access for donors, admins, and users  
+- User registration and profile management  
+- Create and manage blood donation requests  
+- Donor management dashboard (admin)  
+- Content management for donation campaigns and announcements  
+- Search for donors by blood group and location  
+- Responsive design for desktop and mobile  
+- Real-time data updates using TanStack Query  
+
+---
+
+## ⚙ Dependencies
+- react, react-dom, react-router-dom  
+- firebase  
+- @tanstack/react-query  
+- axios  
+- express  
+- mongoose  
+- cors  
+- dotenv  
+- nodemon (for development)
+
+---
+
+## 🚀 How to Run Locally
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/obayed324/blood-donation-client.git
